@@ -12,52 +12,33 @@ dotenv.config();
 
 const app = express();
 
-try {
-  console.log("🚀 Starting app setup...");
+// ✅ MIDDLEWARE
+app.use(cors({ origin: "*", credentials: false }));
+app.use(express.json());
 
-  // Middleware
-  app.use(cors({ origin: "*", credentials: false }));
-  console.log("✅ CORS loaded");
+// ✅ ROOT ROUTE (IMPORTANT)
+app.get("/", (req, res) => {
+  res.status(200).send("Backend running 🚀");
+});
 
-  app.use(express.json());
-  console.log("✅ JSON parser loaded");
+// ✅ ROUTES
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/tasks', taskRoutes);
 
-  // Root route
-  app.get("/", (req, res) => {
-    res.send("Backend running 🚀");
-  });
-  console.log("✅ Root route loaded");
-
-  // Routes
-  app.use('/api/auth', authRoutes);
-  console.log("✅ Auth routes loaded");
-
-  app.use('/api/users', userRoutes);
-  console.log("✅ User routes loaded");
-
-  app.use('/api/projects', projectRoutes);
-  console.log("✅ Project routes loaded");
-
-  app.use('/api/tasks', taskRoutes);
-  console.log("✅ Task routes loaded");
-
-} catch (err) {
-  console.error("❌ Setup error:", err.stack);
-  process.exit(1);
-}
-
-// Global error handler
+// ✅ ERROR HANDLER
 app.use((err, req, res, next) => {
-  console.error("🔥 Express error:", err.stack);
-  res.status(500).json({ error: "Something went wrong" });
+  console.error("ERROR:", err.stack);
+  res.status(500).json({ message: "Server Error" });
 });
 
-// Handle unhandled promise rejections
-process.on("unhandledRejection", (err) => {
-  console.error("❌ Unhandled Rejection:", err.stack);
+// ✅ HANDLE CRASHES
+process.on('unhandledRejection', (err) => {
+  console.error("UNHANDLED REJECTION:", err);
 });
 
-// Start server after DB connect
+// ✅ START SERVER AFTER DB
 const startServer = async () => {
   try {
     await connectDB();
@@ -66,12 +47,11 @@ const startServer = async () => {
     const PORT = process.env.PORT || 8080;
 
     app.listen(PORT, '0.0.0.0', () => {
-      console.log("Server running on port " + PORT);
-      console.log("✅ Server listening on " + PORT);
+      console.log(`✅ Server listening on ${PORT}`);
     });
 
   } catch (err) {
-    console.error("❌ DB connection failed:", err.stack);
+    console.error("❌ Startup Error:", err.stack);
     process.exit(1);
   }
 };

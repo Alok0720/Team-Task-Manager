@@ -9,28 +9,27 @@ import taskRoutes from './routes/taskRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
+connectDB();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// ✅ Root route (for testing Railway)
 app.get("/", (req, res) => {
   res.send("Backend running 🚀");
 });
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 
-// 🔥 START SERVER ONLY AFTER DB CONNECTS
-connectDB().then(() => {
-  const PORT = process.env.PORT || 5000;
+// ✅ IMPORTANT PART (Railway fix)
+const PORT = process.env.PORT;
 
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}).catch(err => {
-  console.log("DB connection failed:", err);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });

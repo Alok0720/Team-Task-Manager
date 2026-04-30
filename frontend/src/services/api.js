@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5001/api',
+  baseURL: 'https://upbeat-integrity-production-7090.up.railway.app/api',
 });
 
 api.interceptors.request.use((config) => {

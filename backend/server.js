@@ -13,7 +13,7 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "*", credentials: false }));
 app.use(express.json());
 
 // ✅ Root route (VERY IMPORTANT for browser test)
@@ -38,6 +38,7 @@ const startServer = async () => {
 
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on port ${PORT}`);
+      console.log("✅ Server listening on " + PORT);
     });
 
   } catch (error) {

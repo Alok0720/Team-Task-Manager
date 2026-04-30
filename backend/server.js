@@ -9,14 +9,12 @@ import taskRoutes from './routes/taskRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
-connectDB();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// ✅ Root route (ADD THIS)
 app.get("/", (req, res) => {
   res.send("Backend running 🚀");
 });
@@ -26,8 +24,13 @@ app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 
-const PORT = process.env.PORT || 5000;
+// 🔥 START SERVER ONLY AFTER DB CONNECTS
+connectDB().then(() => {
+  const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch(err => {
+  console.log("DB connection failed:", err);
 });
